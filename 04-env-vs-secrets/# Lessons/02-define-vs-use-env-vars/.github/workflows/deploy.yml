@@ -1,0 +1,47 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - main
+      - dev
+env: # 1a. define workflow level variables
+  MONGODB_DB_NAME: gha-demo
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env: # 1b. define job level variables
+      MONGODB_CLUSTER_ADDRESS: cluster0.ntrwp.mongodb.net
+      MONGODB_USERNAME: mongo-username
+      MONGODB_PASSWORD: mongo-password
+      PORT: 8080
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-deps-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run server
+        run: npm start & npx wait-on http://127.0.0.1:$PORT # 2a. WORK ->use the PORT that we setup above
+      - name: Run tests
+        run: npm test
+      - name: Output information
+
+        # 2b. WORK
+        run: |
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        env:
+          PORT: 3000
+        # 2c. NOT WORK -> MONGODB_USERNAME & PORT are not available here -> those belongs to test job -> NO ERROR -> just empty value
+        run: |
+          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
+          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+          echo "${{ env.PORT }}"

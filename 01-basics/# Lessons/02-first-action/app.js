@@ -34,7 +34,7 @@
     # github-action-tutorial/.github/workflows/first-action.yml
 
       name: First Workflow
-      on: workflow_dispatch # trigger workflow manually
+      <on>: workflow_dispatch
       jobs: 
         first-job:
           runs-on: ubuntu-latest # host runner
@@ -45,6 +45,14 @@
               run: echo "Goodbye World"
 
   - Commit the changes
+
+
+  🌲 workflow_dispatch -> event -> run workflow manually
+    -> workflows are exec when the events are triggered
+  🍖 runner === host runner === servers (machines) that exec the jobs -> can create custom runner
+  🎈 actions: 
+      # we can run shell command -> echo "Hello World"
+      # we can also run predefined actions -> https://github.com/marketplace/actions
   
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
